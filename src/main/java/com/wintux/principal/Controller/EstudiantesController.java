@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.wintux.principal.Models.Estudiante;
@@ -84,8 +87,37 @@ public class EstudiantesController {
 		// http://localhost:7000/pre/estudiantes/patch/4 [PATCH] JSON
 		@PatchMapping(path="/pre/estudiantes/patch/{identif}", consumes="application/json-patch+json")
 		public ResponseEntity<Object> modificar3Estudiante(@PathVariable("identif") String iidd, @RequestBody JsonPatch atributosModificados){
+				try {
+					Estudiante estOriginal = estudiantes.get(iidd);
+					JsonNode patcheado = atributosModificados.apply(
+							objectMapper.convertValue(estOriginal, JsonNode.class));
+					Estudiante estActualizado = 
+							objectMapper.treeToValue(patcheado, Estudiante.class);
+					estudiantes.remove(iidd);
+					estudiantes.put(iidd, estActualizado);
+					return new ResponseEntity<>("Se modifica ( JSON PATCH) al estudiante "+iidd, HttpStatus.OK); // 200
+				}catch(Exception e) {
+					e.printStackTrace();
+					return new ResponseEntity<>("Error fatal al modificar al estudiante " + iidd,HttpStatus.INTERNAL_SERVER_ERROR); // 500
+				}	
 					
-					return new ResponseEntity<>("Se modifica (PATCH) al estudiante "+iidd, HttpStatus.OK); // 200
+		}
+		// Ejemplo de headers
+		// http://localhost:7000/pre/estudiantes/status [GET]
+		@GetMapping("/pre/estudiantes/status")
+		public ResponseEntity<String> customHeaders(){
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Modo-Universidad", "CRISIS");
+			headers.add("Permiso-Cifrado", "true");
+			headers.add("Cantidad-est", "248");
+			return new ResponseEntity<>("Respuesta con cabeceras propias",headers,HttpStatus.OK);
 		}
 		
+		// http://localhost:7000/pre/estudiantes/edad?n=2027 [GET]
+				@GetMapping("/pre/estudiantes/edad")
+				public ResponseEntity<String> edad(@RequestParam("n") int e){
+					if(estaEnElFuturo(e))
+						return ResponseEntity.badRequest().body("El año no puede ser en el futuro");
+					return ResponseEntity.status(HttpStatus.OK).body("Todo bien");//calcular
+				}
 }
