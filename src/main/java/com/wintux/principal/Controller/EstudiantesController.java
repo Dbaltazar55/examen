@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.wintux.principal.Exceptions.EstudianteNoEncontradoException;
 import com.wintux.principal.Models.Estudiante;
 
 @Controller
@@ -58,6 +59,8 @@ public class EstudiantesController {
 	// http://localhost:7000/pre/estudiantes/4 [PUT]
 	@PutMapping("/pre/estudiantes/{identif}")
 	public ResponseEntity<Object> modificarEstudiante(@PathVariable("identif") String iidd, @RequestBody Estudiante est ){
+		if(!estudiantes.containsKey(iidd))
+			throw new EstudianteNoEncontradoException();
 		estudiantes.remove(iidd);
 		est.setId(Integer.parseInt(iidd));
 		estudiantes.put(iidd, est);
@@ -118,6 +121,13 @@ public class EstudiantesController {
 				public ResponseEntity<String> edad(@RequestParam("n") int e){
 					if(estaEnElFuturo(e))
 						return ResponseEntity.badRequest().body("El año no puede ser en el futuro");
-					return ResponseEntity.status(HttpStatus.OK).body("Todo bien");//calcular
+					return ResponseEntity.status(HttpStatus.OK).body("La edad es de "+ calcularEdad(e));
+					
+				}
+				private boolean estaEnElFuturo(int year) {
+					return year > java.time.Year.now().getValue();
+				}
+				private int calcularEdad(int year) {
+					return java.time.Year.now().getValue() - year;
 				}
 }
