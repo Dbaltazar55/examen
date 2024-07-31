@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wintux.principal.Exceptions.EstudianteNoEncontradoException;
 import com.wintux.principal.Models.Empleado;
-import com.wintux.principal.Models.Estudiante;
-
 
 @Controller
 public class EmpleadoController {
@@ -67,7 +64,7 @@ public class EmpleadoController {
 				@PutMapping("/ex/empleado/{identif}")
 				public ResponseEntity<Object> modificarEstudiante(@PathVariable("identif") String iidd, @RequestBody Empleado emp ){
 					if(!empleados.containsKey(iidd))
-						throw new EstudianteNoEncontradoException();
+					//	throw new EstudianteNoEncontradoException();
 					empleados.remove(iidd);
 					emp.setCi(iidd);
 					empleados.put(iidd, emp);

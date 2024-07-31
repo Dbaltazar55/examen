@@ -17,14 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wintux.principal.Exceptions.EstudianteNoEncontradoException;
-//import com.wintux.principal.Models.Cliente;
-//import com.wintux.principal.Models.Empleado;
-//import com.wintux.principal.Models.Estudiante;
-//import com.wintux.principal.Models.Estudiante;
-import com.wintux.principal.Models.Estudiante;
 import com.wintux.principal.Models.Producto;
-
 
 @Controller
 public class ProductoController {
@@ -32,7 +25,7 @@ public class ProductoController {
 	@Autowired
 	ObjectMapper objectMapper;
 	
-	private static Map<String, Producto> productos = new HashMap<>();
+	private static Map<String, Producto>productos = new HashMap<>();
 	static {
 		
 		
@@ -69,7 +62,7 @@ public class ProductoController {
 				@PutMapping("/ex/producto/{identif}")
 				public ResponseEntity<Object> modificarProducto(@PathVariable("identif") String iidd, @RequestBody Producto pro ){
 					if(!productos.containsKey(iidd))
-						throw new EstudianteNoEncontradoException();
+						//throw new EstudianteNoEncontradoException();
 					productos.remove(iidd);
 					pro.setCodigo(Integer.parseInt(iidd));
 					productos.put(iidd, pro);

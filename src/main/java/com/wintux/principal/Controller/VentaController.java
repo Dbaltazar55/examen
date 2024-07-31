@@ -1,29 +1,20 @@
-package com.wintux.principal.Controller;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.wintux.principal.Exceptions.EstudianteNoEncontradoException;
 import com.wintux.principal.Models.Venta;
 
 @Controller
@@ -59,7 +50,7 @@ public class VentaController {
 	@PutMapping("/ex/ventas/{identif}")
 	public ResponseEntity<Object> modificarEstudiante(@PathVariable("identif") String iidd, @RequestBody Venta ven ){
 		if(!ventas.containsKey(iidd))
-			throw new EstudianteNoEncontradoException();
+			//throw new EstudianteNoEncontradoException();
 		ventas.remove(iidd);
 		ven.setId(Integer.parseInt(iidd));
 		ventas.put(iidd, ven);
