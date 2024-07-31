@@ -44,6 +44,8 @@ public class EmpleadoController {
 	}
 	
 	
+	
+	
 	// http://localhost:9092/ex/empleado [GET]
 		@GetMapping("/ex/empleado")
 		public ResponseEntity<Object> getEmpleados(){
@@ -56,10 +58,29 @@ public class EmpleadoController {
 			empleados.put(emp.getCi()+"", emp);
 			URI ubicacionDelRecurso = ServletUriComponentsBuilder.fromCurrentRequest()
 					.path("/{id}").buildAndExpand(emp.getCi()).toUri();
-			//return new ResponseEntity<>("Se crea al estudiante"+est.getId(), HttpStatus.CREATED); // 201
+			//return new ResponseEntity<>("Se crea al empleo"+est.getCi(), HttpStatus.CREATED); // 201
 			return ResponseEntity.created(ubicacionDelRecurso).build();
 		}	
 		
+		
+		// http://localhost:9092/ex/empleado/4920810 [PUT]
+				@PutMapping("/ex/empleado/{identif}")
+				public ResponseEntity<Object> modificarEstudiante(@PathVariable("identif") String iidd, @RequestBody Empleado emp ){
+					if(!empleados.containsKey(iidd))
+						throw new EstudianteNoEncontradoException();
+					empleados.remove(iidd);
+					emp.setCi(iidd);
+					empleados.put(iidd, emp);
+					return new ResponseEntity<>("Se modifica al estudiante "+emp.getCi(), HttpStatus.OK); // 201
+				}
+		
+		// http://localhost:9092/ex/empleado/4920810 [DELETE]
+		@DeleteMapping("/ex/empleado/{identif}")
+		public ResponseEntity<Object> eliminarEstudiante(@PathVariable("identif") String iidd){
+			empleados.remove(iidd);
+			return new ResponseEntity<>("Se elimina al estudiante "+iidd, HttpStatus.OK); // 200
+		}
+	
 		
 		
 }
